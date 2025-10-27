@@ -10,6 +10,7 @@ dependencies = [
     "numpy>=1.25.0,<2",
     "requests>=2.31.0,<3",
     "sty>=1.0.4,<2",
+    "click>=8.1.6",
 ]
 
 [dependency-groups]
@@ -19,7 +20,7 @@ dev = [
     "pytest>=7.4.0,<8",
     "coverage>=7.2.7,<8",
     "pytesseract>=0.3.10,<0.4",
-    "pywin32>=306,<307",
+    # "pywin32>=306,<307",  # In linux this package it's failing
     "pytest-cov>=4.1.0,<5",
     "pymdown-extensions~=10.1",
     "ruff>=0.14.2",

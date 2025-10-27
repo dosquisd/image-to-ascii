@@ -10,7 +10,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/98/98/c2ff18671db109c9f
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4c/dd/2234eab22353ffc7d94e8d13177aaa050113286e93e7b40eae01fbf7c3d9/certifi-2023.7.22-py3-none-any.whl", hash = "sha256:92d6037539857d8206b8f6ae472e8b77db8058fec5937a1ef3f54304089edbb9", size = 158334, upload-time = "2023-07-22T08:39:25.345Z" },
 ]
-    
+
 [[package]]
 name = "charset-normalizer"
 version = "3.2.0"
@@ -160,6 +160,7 @@ name = "image-to-ascii"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "click" },
     { name = "numpy" },
     { name = "pillow" },
     { name = "requests" },
@@ -180,6 +181,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "click", specifier = ">=8.1.6" },
     { name = "numpy", specifier = ">=1.25.0,<2" },
     { name = "pillow", specifier = ">=10.0.0,<11" },
     { name = "requests", specifier = ">=2.31.0,<3" },
