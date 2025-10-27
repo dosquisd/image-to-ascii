@@ -1,11 +1,12 @@
 """A program to convert images to ASCII art."""
+
 from collections.abc import Sequence
 from typing import Optional
 
 import numpy as np
-from sty import bg, rs
-from PIL import Image, ImageDraw, ImageFont, ImageGrab, ImageEnhance
+from PIL import Image, ImageDraw, ImageEnhance, ImageFont, ImageGrab
 from requests import get
+from sty import bg, rs
 
 from config import CONVERSION_CHARACTERS
 
@@ -23,7 +24,9 @@ def load_font(
 base_font = load_font("monos.ttf", 20)
 
 
-def sizeof(text: str, font: ImageFont.FreeTypeFont = base_font) -> tuple[int, int]:
+def sizeof(
+    text: str, font: ImageFont.FreeTypeFont = base_font
+) -> tuple[int, int]:
     """
     Get the size of the text when rendered in the given font in pixels.
 
@@ -49,7 +52,9 @@ def sizeof(text: str, font: ImageFont.FreeTypeFont = base_font) -> tuple[int, in
     return width, height
 
 
-def ascii_to_image(text: str, font: ImageFont.FreeTypeFont = base_font) -> Image.Image:
+def ascii_to_image(
+    text: str, font: ImageFont.FreeTypeFont = base_font
+) -> Image.Image:
     """
     Convert the given text to an image using the given font.
 
@@ -80,7 +85,9 @@ def ascii_to_image(text: str, font: ImageFont.FreeTypeFont = base_font) -> Image
     return text_image
 
 
-def get_brightness_of_char(char: str, font: ImageFont.FreeTypeFont = base_font) -> int:
+def get_brightness_of_char(
+    char: str, font: ImageFont.FreeTypeFont = base_font
+) -> int:
     """
     Get the brightness of the given character when rendered in the given font.
 
@@ -110,11 +117,7 @@ def get_brightness_of_char(char: str, font: ImageFont.FreeTypeFont = base_font) 
 
 
 sorted_letters = sorted(
-    CONVERSION_CHARACTERS,
-    key=lambda char: (
-        get_brightness_of_char(char),
-        char
-    )
+    CONVERSION_CHARACTERS, key=lambda char: (get_brightness_of_char(char), char)
 )
 
 
@@ -219,11 +222,7 @@ def image_to_ascii(
 
     if sort_chars and charset:
         charset = sorted(
-            charset,
-            key=lambda char: (
-                get_brightness_of_char(char),
-                char
-            )
+            charset, key=lambda char: (get_brightness_of_char(char), char)
         )
     charset = charset or sorted_letters
 
@@ -236,8 +235,12 @@ def image_to_ascii(
 
     scaled_image = image.resize((image_width, image_height))
     brightened_image = ImageEnhance.Brightness(scaled_image).enhance(brightness)
-    sharpened_image = ImageEnhance.Sharpness(brightened_image).enhance(sharpness)
-    image_array = np.array(sharpened_image.convert("L"), dtype=int) * len(charset) // 256
+    sharpened_image = ImageEnhance.Sharpness(brightened_image).enhance(
+        sharpness
+    )
+    image_array = (
+        np.array(sharpened_image.convert("L"), dtype=int) * len(charset) // 256
+    )
     ascii_converted = np.vectorize(charset.__getitem__)(image_array)
 
     output = "\n".join(map("".join, ascii_converted))
