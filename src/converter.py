@@ -21,11 +21,8 @@ def load_font(
         return ImageFont.load_default()
 
 
-base_font = load_font("monos.ttf", 20)
-
-
 def sizeof(
-    text: str, font: ImageFont.FreeTypeFont = base_font
+    text: str, font: Optional[ImageFont.FreeTypeFont] = None
 ) -> tuple[int, int]:
     """
     Get the size of the text when rendered in the given font in pixels.
@@ -47,13 +44,16 @@ def sizeof(
         >>> sizeof("Hello World", custom_font)
         (155, 28)
     """
+    if font is None:
+        font = load_font("monos.ttf", 20)
+
     draw = ImageDraw.Draw(Image.new("RGB", (1, 1)))
     _, _, width, height = draw.textbbox((0, 0), text, font)
     return width, height
 
 
 def ascii_to_image(
-    text: str, font: ImageFont.FreeTypeFont = base_font
+    text: str, font: Optional[ImageFont.FreeTypeFont] = None
 ) -> Image.Image:
     """
     Convert the given text to an image using the given font.
@@ -79,6 +79,9 @@ def ascii_to_image(
         >>> image = ascii_to_image("Hello World")
         >>> image.save("hello_world.png")
     """
+    if font is None:
+        font = load_font("monos.ttf", 20)
+
     text_image = Image.new("RGB", sizeof(text, font))
     draw = ImageDraw.Draw(text_image)
     draw.text((0, 0), text, (255, 255, 255), font)
@@ -86,7 +89,7 @@ def ascii_to_image(
 
 
 def get_brightness_of_char(
-    char: str, font: ImageFont.FreeTypeFont = base_font
+    char: str, font: Optional[ImageFont.FreeTypeFont] = None
 ) -> int:
     """
     Get the brightness of the given character when rendered in the given font.
@@ -112,13 +115,11 @@ def get_brightness_of_char(
         >>> get_brightness_of_char("@") > get_brightness_of_char(".")
         True
     """
+    if font is None:
+        font = load_font("monos.ttf", 20)
+
     image = ascii_to_image(char, font)
     return (np.array(image) != 0).sum().item()
-
-
-sorted_letters = sorted(
-    CONVERSION_CHARACTERS, key=lambda char: (get_brightness_of_char(char), char)
-)
 
 
 def image_to_ascii(
@@ -131,6 +132,7 @@ def image_to_ascii(
     brightness: float = 1,
     sort_chars: bool = False,
     colorful: bool = False,
+    font: Optional[ImageFont.FreeTypeFont] = None,
 ) -> str:
     """
     Convert image to ASCII art.
@@ -146,6 +148,7 @@ def image_to_ascii(
         brightness: Increases the brightness of the image by the given factor
         sort_chars: If given an unordered charset, it will sort it by the brightness of the characters.
         colorful: Whether to use colored characters (only works on terminal).
+        font: The font to use for character brightness calculation (default: monos.ttf).
 
     Returns:
         output: The ASCII art representation of the input image.
@@ -200,6 +203,9 @@ def image_to_ascii(
         ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
         ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
     """
+    if font is None:
+        font = load_font("monos.ttf", 20)
+
     if isinstance(image, str):
         if image.lower() in ("clip", "clipboard"):
             image = ImageGrab.grabclipboard()
@@ -224,7 +230,12 @@ def image_to_ascii(
         charset = sorted(
             charset, key=lambda char: (get_brightness_of_char(char), char)
         )
-    charset = charset or sorted_letters
+
+    if not charset:
+        charset = sorted(
+            CONVERSION_CHARACTERS,
+            key=lambda char: (get_brightness_of_char(char), char),
+        )
 
     image_width, image_height = size or image.size
 
