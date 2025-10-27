@@ -1,29 +1,41 @@
-[tool.poetry]
+[project]
 name = "image-to-ascii"
 version = "0.1.0"
 description = "A python program that converts images to ASCII art."
-authors = ["Ajay Ratnam <ajratnam.dev@gmail.com>"]
+authors = [{ name = "Ajay Ratnam", email = "ajratnam.dev@gmail.com" }]
+requires-python = ">=3.10,<12"
 readme = "README.md"
-packages = [{include = "image_to_ascii"}]
+dependencies = [
+    "pillow>=10.0.0,<11",
+    "numpy>=1.25.0,<2",
+    "requests>=2.31.0,<3",
+    "sty>=1.0.4,<2",
+]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-pillow = "^10.0.0"
-numpy = "^1.25.0"
-requests = "^2.31.0"
-sty = "^1.0.4"
+[dependency-groups]
+dev = [
+    "mkdocs-material>=9.1.21,<10",
+    "mkdocstrings-python>=1.2.1,<2",
+    "pytest>=7.4.0,<8",
+    "coverage>=7.2.7,<8",
+    "pytesseract>=0.3.10,<0.4",
+    "pywin32>=306,<307",
+    "pytest-cov>=4.1.0,<5",
+    "pymdown-extensions~=10.1",
+    "ruff>=0.14.2",
+]
 
+[tool.hatch.build.targets.sdist]
+include = ["image_to_ascii"]
 
-[tool.poetry.group.dev.dependencies]
-mkdocs-material = "^9.1.21"
-mkdocstrings-python = "^1.2.1"
-pytest = "^7.4.0"
-coverage = "^7.2.7"
-pytesseract = "^0.3.10"
-pywin32 = "^306"
-pytest-cov = "^4.1.0"
-pymdown-extensions = "^10.1"
+[tool.hatch.build.targets.wheel]
+include = ["image_to_ascii"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 80
+target-version = "py312"
+lint.extend-select = ["I"]
